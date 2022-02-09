@@ -1,10 +1,22 @@
 const express = require("express")
 const MongoUtil = require("./MongoUtil.js")
+const cors = require('cors')
 require("dotenv").config()
 
 let app = express()
 
+// Enable processing JSON data
+app.use(express.json());
 
+// Enable CORS
+app.use(cors())
+
+// Enable Forms
+app.use(
+    express.urlencoded({
+        extended: false
+    })
+)
 
 async function main() {
     await MongoUtil.connect(process.env.MONGO_URI, 'login_app')
@@ -14,7 +26,9 @@ async function main() {
         let db = MongoUtil.getDB()
         let result = await db.collection("users").find().toArray()
         console.log(result)
-        res.send(true)
+        res.send({
+            "live": true
+        })
     })
 
     // sign up route
