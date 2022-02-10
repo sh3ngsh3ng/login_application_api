@@ -1,5 +1,5 @@
 const crypto = require('crypto')
-
+const jwt = require("jsonwebtoken")
 
 
 const hashPassword = (password) => {
@@ -8,7 +8,17 @@ const hashPassword = (password) => {
     return hash
 }
 
+const generateAccessToken = (user) => {
+    return jwt.sign({
+        'username': user.username,
+        'email': user.email,
+        'role': user.role
+    }, process.env.TOKEN_SECRET, {
+   expiresIn: "1hr"
+})
+}
+
 
 module.exports = {
-    hashPassword
+    hashPassword, generateAccessToken
 }
