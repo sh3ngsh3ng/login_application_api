@@ -104,7 +104,17 @@ async function main() {
     app.get("/list", [checkIfAuthenticatedJWT, checkIfManagerRole], async(req,res) => {
         // return list of everyone
         console.log("called")
-        res.send(true)
+        let db = MongoUtil.getDB()
+
+        let projection = {
+            "username": 1,
+            "email": 1,
+            "role": 1
+        }
+
+        let list = await db.collection("users").find().project(projection).toArray()
+
+        res.json(list)
     })
 
     

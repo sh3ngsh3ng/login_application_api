@@ -9,6 +9,8 @@ const checkIfAuthenticatedJWT = (req,res,next) => {
             if (err) {
                 console.log("Forbidden")
                 return res.sendStatus(403)
+            } else {
+                next()
             }
         })
     } else {
@@ -18,6 +20,7 @@ const checkIfAuthenticatedJWT = (req,res,next) => {
 
 
 const checkIfManagerRole = (req,res,next) => {
+    console.log("manager mw called")
     const authHeader = req.headers.authorization
     if (authHeader) {
         const token = authHeader.split(' ')[1]
