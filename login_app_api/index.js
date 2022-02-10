@@ -2,6 +2,8 @@ const express = require("express")
 const MongoUtil = require("./MongoUtil.js")
 const cors = require('cors')
 require("dotenv").config()
+const hashPassword = require("./utils")
+
 
 let app = express()
 
@@ -18,6 +20,9 @@ app.use(
     })
 )
 
+// forms
+const {createRegistrationForm} = require("./forms")
+
 async function main() {
     await MongoUtil.connect(process.env.MONGO_URI, 'login_app')
 
@@ -33,9 +38,39 @@ async function main() {
 
     // sign up route
     app.post("/sign-up", async(req,res) => {
+        console.log("Called Sign-Up route")
         let db = MongoUtil.getDB()
 
-        // check fields
+        // user's data
+        let signUpData = req.body.form
+
+        // form template
+        const registerForm = createRegistrationForm()
+
+        // handle form
+        registerForm.handle(signUpData, {
+            'success': async(form) => {
+                // create user on mongo
+                console.log("success")
+                
+
+
+            },
+            'error': (form) => {
+                res.send({
+                    'message': "Sign Up Failed. Try again."
+                })
+            }
+        })
+
+        // let data = req.body
+        // let username = data.username
+        
+        // console.log("Called")
+        // console.log(req.body)
+        // res.send(true)
+
+        // check fields -> validation
 
         // if valid -> create user
 
