@@ -22,6 +22,7 @@ app.use(
 
 // forms
 const {createRegistrationForm} = require("./forms")
+const { checkIfAuthenticatedJWT, checkIfManagerRole } = require("./middleware/index.js")
 
 async function main() {
     await MongoUtil.connect(process.env.MONGO_URI, 'login_app')
@@ -29,8 +30,6 @@ async function main() {
     // loading page (wait for api to start up)
     app.get('/', async (req,res) => {
         let db = MongoUtil.getDB()
-        let result = await db.collection("users").find().toArray()
-        console.log(result)
         res.send({
             "live": true
         })
@@ -83,7 +82,6 @@ async function main() {
 
         // check whether user present in mongodb
         let user = await db.collection("users").findOne({username})
- 
         // user present and password correct (will not work if more than 1 same username)
         if (user && (user.password == hashPassword(password))) {
             let accessToken = generateAccessToken(user)
@@ -100,6 +98,13 @@ async function main() {
             })
             console.log("Log in failed")
         }
+    })
+
+    // (PROTECTED) manager access route
+    app.get("/list", [checkIfAuthenticatedJWT, checkIfManagerRole], async(req,res) => {
+        // return list of everyone
+        console.log("called")
+        res.send(true)
     })
 
     
