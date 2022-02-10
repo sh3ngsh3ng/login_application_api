@@ -93,17 +93,16 @@ async function main() {
                     "message": "success"
                 })
             }
+            console.log("Log in success")
         } else {
             res.send({
                 "message": "failed"
             })
+            console.log("Log in failed")
         }
-
-
     })
 
-
-
+    
 
 
 }
